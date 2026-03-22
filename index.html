@@ -102,7 +102,7 @@ body {
   <button onclick="start()">buka pelan pelan</button>
 </div>
 
-<!-- 🎵 LAGU BARU -->
+<!-- 🎵 AUDIO -->
 <audio id="music" loop>
   <source src="https://files.catbox.moe/tv4hyr.mp3" type="audio/mpeg">
 </audio>
@@ -142,9 +142,20 @@ function start() {
     startScreen.style.display = "none";
   }, 1000);
 
+  // 🔥 FIX AUDIO (ANTI BLOCK)
   const music = document.getElementById("music");
-  music.play();
 
+  music.play().catch(() => {
+    const play = () => {
+      music.play();
+      document.removeEventListener("click", play);
+      document.removeEventListener("touchstart", play);
+    };
+    document.addEventListener("click", play);
+    document.addEventListener("touchstart", play);
+  });
+
+  // ✨ TEXT ANIMATION
   const texts = document.querySelectorAll('.text');
   let delay = 0;
 
@@ -173,6 +184,7 @@ function start() {
     delay += 800;
   });
 
+  // 📸 GALLERY
   const images = document.querySelectorAll('.gallery img');
   images.forEach((img, i) => {
     setTimeout(() => {
@@ -181,6 +193,7 @@ function start() {
     }, delay + (i * 1200));
   });
 
+  // 📜 SMOOTH SCROLL
   let pos = 0;
   function smoothScroll() {
     pos += 0.4;
