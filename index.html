@@ -40,6 +40,7 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 10;
+  transition: 1s;
 }
 
 .start button {
@@ -63,13 +64,31 @@ body {
   max-width: 700px;
   line-height: 1.8;
   opacity: 0;
-  transform: translateY(40px);
-  transition: 1.5s;
 }
 
-.show {
+.text.show {
   opacity: 1;
-  transform: translateY(0);
+}
+
+.text span {
+  display: inline-block;
+}
+
+.gallery {
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.gallery img {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 16px;
+  opacity: 0;
+  transform: scale(0.95) translateY(40px);
+  transition: 1.5s ease;
 }
 </style>
 </head>
@@ -79,17 +98,14 @@ body {
 <div class="bg"></div>
 <div class="overlay"></div>
 
-<!-- start -->
 <div class="start" id="startScreen">
   <button onclick="start()">buka pelan pelan</button>
 </div>
 
-<!-- musik -->
-<iframe id="music" width="1" height="1"
-style="opacity:0"
-frameborder="0"
-allow="autoplay; encrypted-media">
-</iframe>
+<!-- 🎵 LAGU BARU -->
+<audio id="music" loop>
+  <source src="https://files.catbox.moe/tv4hyr.mp3" type="audio/mpeg">
+</audio>
 
 <div class="section"><h1>untuk kamu</h1></div>
 
@@ -110,29 +126,29 @@ aku mencintaimu
 dengan cara yang pelan  
 tapi ingin lama</div></div>
 
+<div class="gallery">
+  <img src="https://i.imgur.com/gGMpElA.jpeg">
+  <img src="https://i.imgur.com/nNAfQhi.jpeg">
+  <img src="https://i.imgur.com/BXW0qHH.jpeg">
+  <img src="https://i.imgur.com/B0mL5rD.jpeg">
+  <img src="https://i.imgur.com/DwSCNs9.jpeg">
+</div>
+
 <script>
 function start() {
-  document.getElementById("startScreen").style.display = "none";
-
-  // 🎵 FIX LAGU (WAJIB BEGINI)
-  const music = document.getElementById("music");
-
-  music.src = "https://www.youtube.com/embed/IuRfhjQWS8Q?autoplay=1&mute=1&playsinline=1&enablejsapi=1";
-
-  // unmute setelah jalan
+  const startScreen = document.getElementById("startScreen");
+  startScreen.style.opacity = "0";
   setTimeout(() => {
-    music.contentWindow.postMessage(
-      '{"event":"command","func":"unMute","args":""}',
-      '*'
-    );
-  }, 2000);
+    startScreen.style.display = "none";
+  }, 1000);
 
-  // ✨ efek per kata
+  const music = document.getElementById("music");
+  music.play();
+
   const texts = document.querySelectorAll('.text');
-
   let delay = 0;
 
-  texts.forEach((el, index) => {
+  texts.forEach((el) => {
     const words = el.innerText.trim().split(" ");
     el.innerHTML = "";
     el.classList.add('show');
@@ -141,33 +157,41 @@ function start() {
       const span = document.createElement("span");
       span.innerText = word + " ";
       span.style.opacity = 0;
-      span.style.transition = "0.6s";
+      span.style.transform = "translateY(10px)";
+      span.style.transition = "0.6s ease";
 
       el.appendChild(span);
 
       setTimeout(() => {
         span.style.opacity = 1;
+        span.style.transform = "translateY(0)";
       }, delay);
 
-      if (index < 2) {
-        delay += 220;
-      } else {
-        delay += 150;
-      }
+      delay += 140;
     });
 
-    delay += 1200;
+    delay += 800;
   });
 
-  // 📜 auto scroll
-  function autoScroll() {
-    window.scrollBy(0, 1.2);
-    if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {
-      requestAnimationFrame(autoScroll);
+  const images = document.querySelectorAll('.gallery img');
+  images.forEach((img, i) => {
+    setTimeout(() => {
+      img.style.opacity = 1;
+      img.style.transform = "scale(1) translateY(0)";
+    }, delay + (i * 1200));
+  });
+
+  let pos = 0;
+  function smoothScroll() {
+    pos += 0.4;
+    window.scrollTo(0, pos);
+
+    if (pos < document.body.scrollHeight - window.innerHeight) {
+      requestAnimationFrame(smoothScroll);
     }
   }
 
-  setTimeout(autoScroll, 2000);
+  setTimeout(smoothScroll, 1500);
 }
 </script>
 
