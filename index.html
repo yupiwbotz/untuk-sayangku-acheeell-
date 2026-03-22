@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>untuk kamu</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Georgia, serif;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://i.imgur.com/rNxZZyY.jpeg");
+  background-size: cover;
+  background-position: center;
+  filter: blur(12px) brightness(40%);
+  z-index: -2;
+}
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: -1;
+}
+
+.start {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.start button {
+  padding: 14px 28px;
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+  font-size: 16px;
+}
+
+.section {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.text {
+  max-width: 700px;
+  line-height: 1.8;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: 1.5s;
+}
+
+.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+
+<!-- start -->
+<div class="start" id="startScreen">
+  <button onclick="start()">buka pelan pelan</button>
+</div>
+
+<!-- musik -->
+<iframe id="music" width="1" height="1"
+style="opacity:0"
+frameborder="0"
+allow="autoplay; encrypted-media">
+</iframe>
+
+<div class="section"><h1>untuk kamu</h1></div>
+
+<div class="section"><div class="text">pagi ini, aku tidak langsung mengucapkan apa apa  
+aku hanya duduk sebentar di dalam kepalaku sendiri</div></div>
+
+<div class="section"><div class="text">katanya, hari ini usiamu bertambah  
+tapi kamu selalu terasa seperti sesuatu  
+yang tidak selesai oleh waktu</div></div>
+
+<div class="section"><div class="text">aku tidak pandai merayakan  
+jadi aku memilih tinggal lebih lama  
+di kata kata ini</div></div>
+
+<div class="section"><div class="text">selamat ulang tahun sayang  
+
+aku mencintaimu  
+dengan cara yang pelan  
+tapi ingin lama</div></div>
+
+<script>
+function start() {
+  document.getElementById("startScreen").style.display = "none";
+
+  // 🎵 FIX LAGU (WAJIB BEGINI)
+  const music = document.getElementById("music");
+
+  music.src = "https://www.youtube.com/embed/IuRfhjQWS8Q?autoplay=1&mute=1&playsinline=1&enablejsapi=1";
+
+  // unmute setelah jalan
+  setTimeout(() => {
+    music.contentWindow.postMessage(
+      '{"event":"command","func":"unMute","args":""}',
+      '*'
+    );
+  }, 2000);
+
+  // ✨ efek per kata
+  const texts = document.querySelectorAll('.text');
+
+  let delay = 0;
+
+  texts.forEach((el, index) => {
+    const words = el.innerText.trim().split(" ");
+    el.innerHTML = "";
+    el.classList.add('show');
+
+    words.forEach((word) => {
+      const span = document.createElement("span");
+      span.innerText = word + " ";
+      span.style.opacity = 0;
+      span.style.transition = "0.6s";
+
+      el.appendChild(span);
+
+      setTimeout(() => {
+        span.style.opacity = 1;
+      }, delay);
+
+      if (index < 2) {
+        delay += 220;
+      } else {
+        delay += 150;
+      }
+    });
+
+    delay += 1200;
+  });
+
+  // 📜 auto scroll
+  function autoScroll() {
+    window.scrollBy(0, 1.2);
+    if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {
+      requestAnimationFrame(autoScroll);
+    }
+  }
+
+  setTimeout(autoScroll, 2000);
+}
+</script>
+
+</body>
+</html>
