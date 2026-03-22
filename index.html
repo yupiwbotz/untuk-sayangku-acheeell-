@@ -12,6 +12,7 @@ body {
   overflow-x: hidden;
 }
 
+/* background */
 .bg {
   position: fixed;
   width: 100%;
@@ -31,6 +32,7 @@ body {
   z-index: -1;
 }
 
+/* start screen */
 .start {
   position: fixed;
   width: 100%;
@@ -50,6 +52,7 @@ body {
   font-size: 16px;
 }
 
+/* section */
 .section {
   min-height: 100vh;
   display: flex;
@@ -59,10 +62,21 @@ body {
   padding: 40px;
 }
 
-.text span {
-  display: inline-block;
+/* text animation */
+.text {
+  max-width: 700px;
+  line-height: 1.8;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: 1.5s;
 }
 
+.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* gallery */
 .gallery {
   padding: 80px 20px;
   display: flex;
@@ -77,7 +91,12 @@ body {
   border-radius: 16px;
   opacity: 0;
   transform: scale(0.95) translateY(40px);
-  transition: 1.5s ease;
+  transition: 1.5s;
+}
+
+.gallery img.show {
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
 </style>
 </head>
@@ -87,11 +106,12 @@ body {
 <div class="bg"></div>
 <div class="overlay"></div>
 
+<!-- start -->
 <div class="start" id="startScreen">
   <button onclick="start()">buka pelan pelan</button>
 </div>
 
-<!-- 🎵 AUDIO -->
+<!-- 🎵 AUDIO MP3 (NO IKLAN) -->
 <audio id="music" loop>
   <source src="https://files.catbox.moe/pnnaly.mp3" type="audio/mpeg">
 </audio>
@@ -115,6 +135,7 @@ aku mencintaimu
 dengan cara yang pelan  
 tapi ingin lama</div></div>
 
+<!-- 📸 GALERI -->
 <div class="gallery">
   <img src="https://i.imgur.com/gGMpElA.jpeg">
   <img src="https://i.imgur.com/nNAfQhi.jpeg">
@@ -125,64 +146,56 @@ tapi ingin lama</div></div>
 
 <script>
 function start() {
-  const music = document.getElementById("music");
+  document.getElementById("startScreen").style.display = "none";
 
-  // 🔥 INI KUNCI UTAMA (HARUS DI DALAM CLICK)
+  // 🎵 PLAY MUSIC (100% jalan)
+  const music = document.getElementById("music");
   music.play();
 
-  // hilangin start screen
-  const startScreen = document.getElementById("startScreen");
-  startScreen.style.display = "none";
-
-  // ✨ animasi teks
+  // ✨ teks per kata
   const texts = document.querySelectorAll('.text');
   let delay = 0;
 
-  texts.forEach((el) => {
+  texts.forEach((el, index) => {
     const words = el.innerText.trim().split(" ");
     el.innerHTML = "";
+    el.classList.add('show');
 
     words.forEach((word) => {
       const span = document.createElement("span");
       span.innerText = word + " ";
       span.style.opacity = 0;
-      span.style.transform = "translateY(10px)";
-      span.style.transition = "0.6s ease";
+      span.style.transition = "0.6s";
 
       el.appendChild(span);
 
       setTimeout(() => {
         span.style.opacity = 1;
-        span.style.transform = "translateY(0)";
       }, delay);
 
-      delay += 140;
+      delay += 180;
     });
 
-    delay += 800;
+    delay += 1000;
   });
 
-  // 📸 foto
+  // 📸 foto muncul satu satu
   const images = document.querySelectorAll('.gallery img');
   images.forEach((img, i) => {
     setTimeout(() => {
-      img.style.opacity = 1;
-      img.style.transform = "scale(1) translateY(0)";
+      img.classList.add('show');
     }, delay + (i * 1200));
   });
 
-  // 📜 scroll
-  let pos = 0;
-  function smoothScroll() {
-    pos += 0.4;
-    window.scrollTo(0, pos);
-
-    if (pos < document.body.scrollHeight - window.innerHeight) {
-      requestAnimationFrame(smoothScroll);
+  // 📜 auto scroll
+  function autoScroll() {
+    window.scrollBy(0, 1.2);
+    if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {
+      requestAnimationFrame(autoScroll);
     }
   }
 
-  setTimeout(smoothScroll, 1500);
+  setTimeout(autoScroll, 1500);
 }
 </script>
 
